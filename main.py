@@ -10,13 +10,13 @@ static_folder='static' # Name of directory for static files
 
 @app.route("/")
 def index():
-    return 'this is an Index Page'
+    return render_template('index.html')
 
 @app.route('/hello')
 def hello():
-    return 'Hello, World'
+    return "hello"
 
-app.run(host='127.0.0.1',port=0)
-if __name__ == "main": # Makes sure this is the main process
+#app.run(host='127.0.0.1',port=0)
+if __name__ == "__main__": # Makes sure this is the main process
     # Starts the site
-    app.run(host='127.0.0.1',port=0)
+    app.run(host='127.0.0.1',port=5000)
