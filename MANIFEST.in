@@ -1,0 +1,4 @@
+include focus/schema.sql
+graft focus/static
+graft focus/templates
+global-exclude *.pyc
