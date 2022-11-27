@@ -12,7 +12,7 @@ def create_app(test_config=None):
     )
 
     if test_config is None:
-        # load the instance config, if it exists, when not testing
+        # load the instance config, if it exists, when not testingls
         app.config.from_pyfile('config.py', silent=True)
     else:
         # load the test config if passed in
@@ -38,5 +38,9 @@ def create_app(test_config=None):
     from . import blog
     app.register_blueprint(blog.bp)
     app.add_url_rule('/', endpoint='index')
+    
+    # from ..repo import clock
+    # app.register_blueprint(clock.bp)
+    #app.add_url_rule('/', endpoint='index')
     
     return app
