@@ -1,4 +1,5 @@
 from datetime import timedelta
+from datetime import date
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for
 )
@@ -22,15 +23,23 @@ def index():
         ' FROM clock c JOIN user u ON c.author_id = u.id'
         ' ORDER BY created DESC'
     ).fetchall()
-    summary = db.execute(
-        'SELECT c.id, title, created,ended'
-        ' FROM clock c JOIN user u ON c.author_id = u.id WHERE ended IS NOT NULL'
-        ' ORDER BY created DESC'
-    ).fetchall()
-    total_focus = timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0)
-    for s in summary:
-        total_focus = total_focus+ s['ended']- s['created']
-    return render_template('blog/index.html', posts=posts,clocks=clocks,total_focus=total_focus)
+    if g.user is not None:
+        # summary = db.execute(
+        #     'SELECT id, title, created,ended,author_id'
+        #     ' FROM clock WHERE author_id = ? AND ended IS NOT NULL AND CAST(created AS DATE) == CAST(DATE("now") AS DATE)'
+        #     ' ORDER BY created DESC',(g.user['id'],)
+        # ).fetchall()
+        summary = db.execute(
+            'SELECT id, title, created,ended,author_id  FROM clock WHERE author_id = ? AND ended IS NOT NULL AND CAST(created AS DATE) = CAST(CURRENT_TIMESTAMP AS DATE)'
+            ' ORDER BY created DESC',(g.user['id'],)
+        ).fetchall()
+    
+        total_focus = timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0)
+        for s in summary:
+            total_focus = total_focus+ s['ended']- s['created']
+        return render_template('blog/index.html', posts=posts,clocks=clocks,total_focus=total_focus)
+    else:
+        return render_template('blog/index.html', posts=posts,clocks=clocks)
 
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
